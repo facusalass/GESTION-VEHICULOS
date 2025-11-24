@@ -1,46 +1,40 @@
-
 import Modelos.*;
 import servicios.GestionVehiculos;
+import Excepciones.ElementoNoEncontradoException;
 import java.util.Scanner;
 
 public class Main {
 
     private static final Scanner scanner = new Scanner(System.in);
-
     private static final GestionVehiculos sistema = new GestionVehiculos();
-
 
     private static final String[] historialAcciones = new String[5];
     private static int contadorHistorial = 0;
 
     public static void main(String[] args) {
-        System.out.println("Iniciando Sistema de Gestión...");
-
+        System.out.println("Iniciando Sistema...");
         mostrarMenu();
     }
 
-
     private static void mostrarMenu() {
-        System.out.println("\n===== MENU PRINCIPAL (Integrante 3) =====");
+        System.out.println("\n===== MENU PRINCIPAL =====");
         System.out.println("1. Agregar Vehículo");
         System.out.println("2. Listar Vehículos");
         System.out.println("3. Buscar Vehículo");
         System.out.println("4. Registrar Mantenimiento");
-        System.out.println("5. Ver Historial de Sesión (Uso de Array)");
+        System.out.println("5. Ver Historial");
         System.out.println("0. Salir");
-        System.out.print("Seleccione una opción: ");
+        System.out.print("Opción: ");
 
         String input = scanner.nextLine();
 
-
-        if (!esNumero(input)) {
-            System.out.println(" Error: Ingrese un número válido.");
+        if (input == null || !input.matches("\\d+")) {
+            System.out.println("Por favor ingrese un número válido.");
             mostrarMenu();
             return;
         }
 
         int opcion = Integer.parseInt(input);
-
 
         switch (opcion) {
             case 1:
@@ -59,65 +53,62 @@ public class Main {
                 mostrarHistorialArray();
                 break;
             case 0:
-                System.out.println("Saliendo del sistema...");
+                System.out.println("Saliendo...");
                 return;
             default:
-                System.out.println(" Opción no válida.");
+                System.out.println("Opción no válida.");
         }
 
-
         if (opcion != 0) {
-            guardarEnArray("Usuario seleccionó opción " + opcion);
+            guardarEnArray("Opción " + opcion);
             mostrarMenu();
         }
     }
 
-
-
     private static void agregarVehiculo() {
-        System.out.println("\n--- Agregar Vehículo ---");
-
-        String patente;
-        do {
-            System.out.print("Ingrese patente (mínimo 6 caracteres): ");
-            patente = scanner.nextLine().toUpperCase();
-        } while (patente.length() < 6);
-
-        System.out.print("Ingrese marca: ");
+        System.out.print("Patente: ");
+        String pat = scanner.nextLine().toUpperCase();
+        System.out.print("Marca: ");
         String marca = scanner.nextLine();
-        System.out.print("Ingrese modelo: ");
-        String modelo = scanner.nextLine();
+        System.out.print("Modelo: ");
+        String mod = scanner.nextLine();
 
-        System.out.print("Ingrese kilometraje: ");
-        int km = Integer.parseInt(scanner.nextLine());
-
-        System.out.print("Tipo (A)uto o (M)oto: ");
-        String tipo = scanner.nextLine().toUpperCase();
-
-        Vehiculo v = null;
-
-        if (tipo.equals("A")) {
-            System.out.print("Cantidad de puertas: ");
-            int puertas = Integer.parseInt(scanner.nextLine());
-            v = new Auto(patente, marca, modelo, km, puertas);
-        } else {
-            System.out.print("Cilindrada: ");
-            int cc = Integer.parseInt(scanner.nextLine());
-            v = new Moto(patente, marca, modelo, km, cc);
+        int km = 0;
+        try {
+            System.out.print("KM: ");
+            km = Integer.parseInt(scanner.nextLine());
+        } catch (NumberFormatException e) {
+            km = 0;
         }
 
-        if (sistema.agregarVehiculo(v)) {
-            System.out.println(" Vehículo agregado.");
-        } else {
-            System.out.println(" Error: Patente duplicada.");
+
+        System.out.print("Ingrese Tipo de Vehículo (A para Auto, M para Moto): ");
+        String tipo = scanner.nextLine().toUpperCase();
+
+        Vehiculo v;
+        try {
+            if (tipo.equals("A")) {
+
+                v = new Auto(pat, marca, mod, km, 4);
+            } else {
+                System.out.print("Cilindrada: ");
+                int c = Integer.parseInt(scanner.nextLine());
+                v = new Moto(pat, marca, mod, km, c);
+            }
+
+            if (sistema.agregarVehiculo(v)) {
+                System.out.println("✅ Vehículo agregado correctamente.");
+            } else {
+                System.out.println("⚠ Error: Ya existe esa patente.");
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("Error: Ingrese números válidos.");
         }
     }
 
     private static void listarVehiculos() {
-        System.out.println("\n--- Listado ---");
-
         if (sistema.listarVehiculos().isEmpty()) {
-            System.out.println("No hay datos.");
+            System.out.println("Lista vacía.");
         } else {
             for (Vehiculo v : sistema.listarVehiculos()) {
                 System.out.println(v);
@@ -127,53 +118,54 @@ public class Main {
 
     private static void buscarVehiculo() {
         System.out.print("Ingrese patente a buscar: ");
-        String pat = scanner.nextLine().toUpperCase();
+        String pat = scanner.nextLine();
 
-        var encontrado = sistema.buscarVehiculo(pat);
-        if (encontrado.isPresent()) {
-            System.out.println("Encontrado: " + encontrado.get());
+        var resultado = sistema.buscarVehiculo(pat);
+
+        if (resultado.isPresent()) {
+            System.out.println("-----------------------------");
+            System.out.println("VEHÍCULO ENCONTRADO:");
+            System.out.println(resultado.get());
+            System.out.println("-----------------------------");
         } else {
-            System.out.println("No existe.");
+            System.out.println("❌ No existe vehículo con esa patente.");
         }
     }
 
     private static void registrarMantenimiento() {
-        System.out.print("Ingrese patente: ");
+        System.out.print("Patente: ");
         String pat = scanner.nextLine().toUpperCase();
-        System.out.print("Descripción servicio: ");
-        String desc = scanner.nextLine();
-        System.out.print("Costo: ");
-        double costo = Double.parseDouble(scanner.nextLine());
+        System.out.print("Detalle del servicio: ");
+        String det = scanner.nextLine();
 
-        Mantenimiento m = new Mantenimiento(desc, costo);
-        if (sistema.registrarMantenimiento(pat, m)) {
-            System.out.println(" Mantenimiento registrado.");
-        } else {
-            System.out.println(" Vehículo no encontrado.");
+        double costo = 0;
+        try {
+            System.out.print("Costo: ");
+            costo = Double.parseDouble(scanner.nextLine());
+        } catch (NumberFormatException e) {
+            System.out.println("Costo inválido.");
+            return;
+        }
+
+        try {
+            sistema.registrarMantenimiento(pat, new Mantenimiento(det, costo));
+            System.out.println("✅ Mantenimiento registrado con éxito.");
+
+        } catch (ElementoNoEncontradoException e) {
+            System.out.println("⛔ ERROR: " + e.getMessage());
         }
     }
 
-
     private static void guardarEnArray(String accion) {
-
         historialAcciones[contadorHistorial % 5] = accion;
         contadorHistorial++;
     }
 
     private static void mostrarHistorialArray() {
-        System.out.println("\n--- Últimas 5 acciones (Array) ---");
-        for (int i = 0; i < historialAcciones.length; i++) {
-            if (historialAcciones[i] != null) {
-                System.out.println("[" + (i+1) + "] " + historialAcciones[i]);
-            }
-        }
-    }
 
-    private static boolean esNumero(String str) {
-        if (str == null || str.isEmpty()) return false;
-        for (char c : str.toCharArray()) {
-            if (!Character.isDigit(c)) return false;
+        System.out.println("\n--- Historial de opciones del usuario ---");
+        for (String s : historialAcciones) {
+            if (s != null) System.out.println(s);
         }
-        return true;
     }
 }

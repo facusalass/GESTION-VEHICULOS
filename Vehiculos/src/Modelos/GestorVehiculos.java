@@ -8,14 +8,14 @@ import java.util.Optional;
 public class GestorVehiculos {
 
     private List<Vehiculo> vehiculos;
-    private ListaOperaciones historial = new ListaOperaciones(); // historial con lista enlazada propia
+    private ListaOperaciones historial = new ListaOperaciones();
 
     public GestorVehiculos() {
         this.vehiculos = new ArrayList<>();
     }
 
     public boolean agregarVehiculo(Vehiculo vehiculo) {
-        // evita duplicados por patente
+
         boolean existe = vehiculos.stream()
                 .anyMatch(v -> v.getPatente().equalsIgnoreCase(vehiculo.getPatente()));
 

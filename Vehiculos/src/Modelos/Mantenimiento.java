@@ -3,7 +3,7 @@ import java.time.LocalDate;
 
 public class Mantenimiento {
     private String descripcion;
-    private Double costo; // Wrapper Double
+    private Double costo;
     private LocalDate fecha;
 
     public Mantenimiento(String descripcion, Double costo) {
