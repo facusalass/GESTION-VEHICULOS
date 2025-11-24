@@ -12,7 +12,7 @@ public abstract class Vehiculo {
 
     private List<Mantenimiento> historialMantenimientos;
 
-    // Constructor
+
     public Vehiculo(String patente, String marca, String modelo, Integer kilometraje) {
         this.patente = patente;
         this.marca = marca;
