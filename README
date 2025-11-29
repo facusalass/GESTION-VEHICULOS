@@ -1,6 +1,6 @@
-# 🚗 Trabajo Final: Sistema de Gestión de Vehículos
+# Trabajo Final: Sistema de Gestión de Vehículos
 
-## 📄 Descripción del Proyecto
+## Descripción del Proyecto
 Este proyecto es una aplicación de consola en Java que simula la administración de una flota de vehículos. El objetivo principal fue integrar todos los conceptos vistos en la cursada sobre **Programación Orientada a Objetos (POO)**.
 
 El sistema permite dar de alta vehículos (diferenciando entre Autos y Motos), listarlos, buscarlos y registrar mantenimientos, asegurando que el programa sea robusto y no se rompa ante errores del usuario.
