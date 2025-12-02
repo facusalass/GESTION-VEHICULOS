@@ -125,10 +125,14 @@ public class Main {
         if (resultado.isPresent()) {
             System.out.println("-----------------------------");
             System.out.println("VEHÍCULO ENCONTRADO:");
-            System.out.println(resultado.get());
+
+            Mostrable mostrar = () -> System.out.println(resultado.get());
+
+            mostrar.mostrarResumen();
+
             System.out.println("-----------------------------");
         } else {
-            System.out.println("❌ No existe vehículo con esa patente.");
+            System.out.println(" No existe vehículo con esa patente.");
         }
     }
 

@@ -1,6 +1,6 @@
 package Modelos;
 
-class NodoOperacion {
+class   NodoOperacion {
     String descripcion;
     NodoOperacion siguiente;
 
