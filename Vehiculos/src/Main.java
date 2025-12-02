@@ -66,43 +66,35 @@ public class Main {
     }
 
     private static void agregarVehiculo() {
-        System.out.print("Patente: ");
-        String pat = scanner.nextLine().toUpperCase();
-        System.out.print("Marca: ");
-        String marca = scanner.nextLine();
-        System.out.print("Modelo: ");
-        String mod = scanner.nextLine();
+        System.out.println("\n--- ALTA DE VEHÍCULO ---");
 
-        int km = 0;
-        try {
-            System.out.print("KM: ");
-            km = Integer.parseInt(scanner.nextLine());
-        } catch (NumberFormatException e) {
-            km = 0;
+        String pat = leerTexto("Patente: ").toUpperCase();
+        String marca = leerTexto("Marca: ");
+        String modelo = leerTexto("Modelo: ");
+
+        int km = leerEntero("KM: ");
+
+        String tipo = leerTexto("Ingrese Tipo de Vehículo (A para Auto, M para Moto): ").toUpperCase();
+
+        Vehiculo v = null;
+
+        if (tipo.equals("A")) {
+            int puertas = leerEntero("Cantidad de Puertas: ");
+            v = new Auto(pat, marca, modelo, km, puertas);
+
+        } else if (tipo.equals("M")) {
+            int cilindrada = leerEntero("Cilindrada: ");
+            v = new Moto(pat, marca, modelo, km, cilindrada);
+
+        } else {
+            System.out.println("Tipo de vehículo no válido. Cancelando operación.");
+            return;
         }
 
-
-        System.out.print("Ingrese Tipo de Vehículo (A para Auto, M para Moto): ");
-        String tipo = scanner.nextLine().toUpperCase();
-
-        Vehiculo v;
-        try {
-            if (tipo.equals("A")) {
-
-                v = new Auto(pat, marca, mod, km, 4);
-            } else {
-                System.out.print("Cilindrada: ");
-                int c = Integer.parseInt(scanner.nextLine());
-                v = new Moto(pat, marca, mod, km, c);
-            }
-
-            if (sistema.agregarVehiculo(v)) {
-                System.out.println("✅ Vehículo agregado correctamente.");
-            } else {
-                System.out.println("⚠ Error: Ya existe esa patente.");
-            }
-        } catch (NumberFormatException e) {
-            System.out.println("Error: Ingrese números válidos.");
+        if (sistema.agregarVehiculo(v)) {
+            System.out.println("Vehículo agregado correctamente.");
+        } else {
+            System.out.println("Error: Ya existe esa patente.");
         }
     }
 
@@ -153,10 +145,10 @@ public class Main {
 
         try {
             sistema.registrarMantenimiento(pat, new Mantenimiento(det, costo));
-            System.out.println("✅ Mantenimiento registrado con éxito.");
+            System.out.println("Mantenimiento registrado con éxito.");
 
         } catch (ElementoNoEncontradoException e) {
-            System.out.println("⛔ ERROR: " + e.getMessage());
+            System.out.println("ERROR: " + e.getMessage());
         }
     }
 
@@ -170,6 +162,34 @@ public class Main {
         System.out.println("\n--- Historial de opciones del usuario ---");
         for (String s : historialAcciones) {
             if (s != null) System.out.println(s);
+        }
+    }
+    private static int leerEntero(String mensaje) {
+        while (true) {
+            System.out.print(mensaje);
+            String linea = scanner.nextLine().trim();
+            if (linea.isEmpty()) {
+                System.out.println("Debe ingresar un número. Intente otra vez.");
+                continue;
+            }
+            try {
+                return Integer.parseInt(linea);
+            } catch (NumberFormatException e) {
+                System.out.println("Valor inválido. Ingrese un número.");
+            }
+        }
+    }
+
+    private static String leerTexto(String mensaje) {
+        while (true) {
+            System.out.print(mensaje);
+            String input = scanner.nextLine().trim();
+
+            if (input.isEmpty()) {
+                System.out.println("⚠Error: El campo no puede estar vacío. Intente nuevamente.");
+            } else {
+                return input;
+            }
         }
     }
 }
